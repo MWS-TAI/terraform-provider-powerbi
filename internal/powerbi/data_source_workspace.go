@@ -1,7 +1,7 @@
 package powerbi
 
 import (
-	"github.com/codecutout/terraform-provider-powerbi/internal/powerbiapi"
+	"github.com/MWS-TAI/terraform-provider-powerbi/internal/powerbiapi"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 

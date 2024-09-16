@@ -1,6 +1,6 @@
 # Terraform Provider for Power BI
 
-[![Test status](https://github.com/codecutout/terraform-provider-powerbi/workflows/tests/badge.svg?branch=master)](https://github.com/codecutout/terraform-provider-powerbi/actions?query=workflow%3Atests+branch%3Amaster)
+[![Test status](https://github.com/MWS-TAI/terraform-provider-powerbi/workflows/tests/badge.svg?branch=master)](https://github.com/MWS-TAI/terraform-provider-powerbi/actions?query=workflow%3Atests+branch%3Amaster)
 
 A Terraform provider that allows the creation and updating of Power BI resources
 

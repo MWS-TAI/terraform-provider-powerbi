@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/codecutout/terraform-provider-powerbi/internal/docgen"
-	"github.com/codecutout/terraform-provider-powerbi/internal/powerbi"
+	"github.com/MWS-TAI/terraform-provider-powerbi/internal/docgen"
+	"github.com/MWS-TAI/terraform-provider-powerbi/internal/powerbi"
 )
 
 func main() {

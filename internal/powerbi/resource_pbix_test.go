@@ -12,8 +12,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/codecutout/terraform-provider-powerbi/internal/pbixrewriter"
-	"github.com/codecutout/terraform-provider-powerbi/internal/powerbiapi"
+	"github.com/MWS-TAI/terraform-provider-powerbi/internal/pbixrewriter"
+	"github.com/MWS-TAI/terraform-provider-powerbi/internal/powerbiapi"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
