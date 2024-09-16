@@ -1,4 +1,4 @@
-module github.com/codecutout/terraform-provider-powerbi
+module github.com/MWS-TAI/terraform-provider-powerbi
 
 go 1.20
 
