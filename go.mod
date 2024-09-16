@@ -4,5 +4,6 @@ go 1.20
 
 require (
 	github.com/hashicorp/go-cleanhttp v0.5.2
-	github.com/hashicorp/terraform-plugin-sdk v2.34.0
+	github.com/hashicorp/terraform-plugin-sdk/v2 v2.24.0
+	github.com/hashicorp/terraform-exec v0.21.0
 )
