@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"net/textproto"
@@ -17,6 +16,13 @@ import (
 // Client allows calling the Power BI service
 type Client struct {
 	*http.Client
+}
+
+//NewClientWithAccessToken creates a Power BI REST API client using an access token with delegated permissions
+func NewClientWithAccessToken(accessToken string) (*Client, error) {
+	return newClient(func(httpClient *http.Client) (string, error) {
+		return accessToken, nil
+	})
 }
 
 //NewClientWithPasswordAuth creates a Power BI REST API client using password authentication with delegated permissions
@@ -31,6 +37,13 @@ func NewClientWithClientCredentialAuth(tenant string, clientID string, clientSec
 
 	return newClient(func(httpClient *http.Client) (string, error) {
 		return getAuthTokenWithClientCredentials(httpClient, tenant, clientID, clientSecret)
+	})
+}
+
+//NewClientWithAzureCLIAuth creates a Power BI REST API client using Azure CLI authentication
+func NewClientWithAzureCLIAuth() (*Client, error) {
+	return newClient(func(httpClient *http.Client) (string, error) {
+		return getAuthTokenWithAzureCLI()
 	})
 }
 
@@ -149,7 +162,7 @@ func newJSONResponse(httpResponse *http.Response, response interface{}) error {
 		return nil
 	}
 
-	httpResponseData, err := ioutil.ReadAll(httpResponse.Body)
+	httpResponseData, err := io.ReadAll(httpResponse.Body)
 	if err != nil {
 		return err
 	}

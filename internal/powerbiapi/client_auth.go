@@ -1,19 +1,31 @@
 package powerbiapi
 
 import (
+	// "context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
+	"os/exec"
 	"strings"
 	"sync"
 
 	"github.com/hashicorp/go-cleanhttp"
+	// "github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 type tokenResponse struct {
 	AccessToken string `json:"access_token"`
+}
+
+type cliTokenResponse struct {
+    AccessToken  string `json:"accessToken"`
+    ExpiresOn    string `json:"expiresOn"`
+    ExpiresOnTS  int64  `json:"expires_on"`
+    Subscription string `json:"subscription"`
+    Tenant       string `json:"tenant"`
+    TokenType    string `json:"tokenType"`
 }
 
 type bearerTokenRoundTripper struct {
@@ -86,11 +98,11 @@ func getAuthTokenWithPassword(
 	}
 
 	if resp.StatusCode != 200 {
-		data, _ := ioutil.ReadAll(resp.Body)
+		data, _ := io.ReadAll(resp.Body)
 		return "", fmt.Errorf("status: %d, body: %s", resp.StatusCode, data)
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}
@@ -120,11 +132,11 @@ func getAuthTokenWithClientCredentials(
 	}
 
 	if resp.StatusCode != 200 {
-		data, _ := ioutil.ReadAll(resp.Body)
+		data, _ := io.ReadAll(resp.Body)
 		return "", fmt.Errorf("status: %d, body: %s", resp.StatusCode, data)
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}
@@ -132,4 +144,21 @@ func getAuthTokenWithClientCredentials(
 	var dataObj tokenResponse
 	err = json.Unmarshal(data, &dataObj)
 	return dataObj.AccessToken, err
+}
+
+func getAuthTokenWithAzureCLI() (string, error) {
+    // Execute the az account get-access-token command
+    cmd := exec.Command("az", "account", "get-access-token", "--resource", "https://analysis.windows.net/powerbi/api")
+    output, err := cmd.Output()
+    if err != nil {
+        return "", fmt.Errorf("failed to execute az command: %v", err)
+    }
+
+    // Parse the output
+    var dataObj cliTokenResponse
+    if err := json.Unmarshal(output, &dataObj); err != nil {
+        return "", fmt.Errorf("failed to parse az command output: %v", err)
+    }
+
+    return dataObj.AccessToken, nil
 }

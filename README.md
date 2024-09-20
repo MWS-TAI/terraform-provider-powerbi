@@ -11,6 +11,7 @@ The Power BI Provider supports Terraform 0.12.x. It may still function on earlie
 ## Traffyk Building
 GOOS=darwin GOARCH=arm64 go build -o terraform-provider-powerbi_v1.0.0_darwin_arm64
 GOOS=linux GOARCH=amd64 go build -o terraform-provider-powerbi_v1.0.0_linux_amd64
+GOOS=windows GOARCH=amd64 go build -o terraform-provider-powerbi_v1.0.0_windows_amd64
 
 ## Installation
 
