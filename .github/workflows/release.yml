@@ -1,47 +1,49 @@
 # This GitHub action can publish assets for release when a tag is created.
 # Currently its setup to run on any tag that matches the pattern "v*" (ie. v0.1.0).
 #
-# This uses an action (paultyng/ghaction-import-gpg) that assumes you set your 
+# This uses an action (paultyng/ghaction-import-gpg) that assumes you set your
 # private key in the `GPG_PRIVATE_KEY` secret and passphrase in the `PASSPHRASE`
 # secret. If you would rather own your own GPG handling, please fork this action
 # or use an alternative one for key handling.
 #
-# You will need to pass the `--batch` flag to `gpg` in your signing step 
+# You will need to pass the `--batch` flag to `gpg` in your signing step
 # in `goreleaser` to indicate this is being used in a non-interactive mode.
 #
 name: release
 on:
-  push:
-    tags:
-      - 'v*'
+  release:
+    types: [published]
 jobs:
-  goreleaser:
+  upload-artifacts:
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v2.3.4
-      -
-        name: Unshallow
+      - name: Checkout
+        uses: actions/checkout@v4.1.7
+      - name: Unshallow
         run: git fetch --prune --unshallow
-      -
-        name: Set up Go
-        uses: actions/setup-go@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v5.0.2
         with:
-          go-version: 1.14
-      -
-        name: Import GPG key
-        id: import_gpg
-        uses: paultyng/ghaction-import-gpg@v2.1.0
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-          PASSPHRASE: ${{ secrets.PASSPHRASE }}
-      -
-        name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2.5.0
+          go-version: 1.22.6
+
+      - name: Build Artifacts
+        run: |
+          go mod tidy
+          go mod download
+          go mod verify
+          go mod vendor
+          make build-all
+
+      - name: Get Version
+        id: version
+        run: echo "version={{ github.event.release.tag_name | replace('v', '') }}" >> $GITHUB_OUTPUT
+
+      - name: Upload Release Artifacts
+        uses: softprops/action-gh-release@v2.0.8
         with:
-          version: latest
-          args: release --rm-dist
-        env:
-          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          files: |
+            bin/{{ steps.version.outputs.version }}/darwin_arm64/terraform-provider-powerbi_{{ steps.version.outputs.version }}
+            bin/{{ steps.version.outputs.version }}/linux_amd64/terraform-provider-powerbi_{{ steps.version.outputs.version }}
+            bin/{{ steps.version.outputs.version }}/windows_amd64/terraform-provider-powerbi_{{ steps.version.outputs.version }}
+          token: ${{ secrets.GITHUB_TOKEN }}
