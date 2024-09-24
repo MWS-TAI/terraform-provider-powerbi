@@ -34,8 +34,8 @@ jobs:
       - name: Get Version
         id: version
         run: |
-          # version=${{ github.event.release.tag_name }} | sed 's/^v//'
-          echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+          # version=${{ github.event.release.tag_name }} | sed 's/v//g'
+          echo "version=${version}" >> $GITHUB_OUTPUT
 
       - name: Build Artifacts
         run: |
