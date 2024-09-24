@@ -34,8 +34,7 @@ jobs:
       - name: Get Version
         id: version
         run: |
-          version=${{ github.event.release.tag_name }} | sed 's/v//g'
-          echo "version=${version}" >> $GITHUB_OUTPUT
+          echo "version=$(echo ${{ github.ref }} | sed 's/refs\/tags\/v//')" >> $GITHUB_OUTPUT
 
       - name: Prepare Go
         run: |
