@@ -30,7 +30,7 @@ jobs:
       - name: Get Version
         id: version
         run: |
-          version=${{ github.event.release.tag_name }} | sed 's/v//'
+          version=${{ github.event.release.tag_name }} | sed 's/^v//'
           echo "version=${version}" >> $GITHUB_ENV
 
       - name: Build Artifacts
