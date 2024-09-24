@@ -1,15 +1,4 @@
-# This GitHub action can publish assets for release when a tag is created.
-# Currently its setup to run on any tag that matches the pattern "v*" (ie. v0.1.0).
-#
-# This uses an action (paultyng/ghaction-import-gpg) that assumes you set your
-# private key in the `GPG_PRIVATE_KEY` secret and passphrase in the `PASSPHRASE`
-# secret. If you would rather own your own GPG handling, please fork this action
-# or use an alternative one for key handling.
-#
-# You will need to pass the `--batch` flag to `gpg` in your signing step
-# in `goreleaser` to indicate this is being used in a non-interactive mode.
-#
-name: release
+name: Release
 on:
   release:
     types: [published]
@@ -22,9 +11,6 @@ jobs:
         uses: actions/checkout@v4.1.7
         with:
           ref: ${{ github.event.release.tag_name }}
-
-      - name: Unshallow
-        run: git fetch --prune --unshallow
 
       - name: Set up Go
         uses: actions/setup-go@v5.0.2
@@ -47,11 +33,18 @@ jobs:
         run: |
           make build-all VERSION=${{ steps.version.outputs.version }}
 
+      - name: Rename Artifacts
+        run: |
+          for arch in darwin_arm64 linux_amd64 windows_amd64; do
+            version=${{ steps.version.outputs.version }}
+            mv bin/${version}/${arch}/terraform-provider-powerbi_v${version} bin/${arch}-v${version}
+          done
+
       - name: Upload Release Artifacts
         uses: softprops/action-gh-release@v2.0.8
         with:
           files: |
-            bin/${{ steps.version.outputs.version }}/darwin_arm64/terraform-provider-powerbi_v${{ steps.version.outputs.version }}
-            bin/${{ steps.version.outputs.version }}/linux_amd64/terraform-provider-powerbi_v${{ steps.version.outputs.version }}
-            bin/${{ steps.version.outputs.version }}/windows_amd64/terraform-provider-powerbi_v${{ steps.version.outputs.version }}
+            bin/darwin_arm64-v${{ steps.version.outputs.version }}
+            bin/linux_amd64-v${{ steps.version.outputs.version }}
+            bin/windows_amd64-v${{ steps.version.outputs.version }}
           token: ${{ secrets.GITHUB_TOKEN }}
