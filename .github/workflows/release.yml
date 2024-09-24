@@ -34,17 +34,19 @@ jobs:
       - name: Get Version
         id: version
         run: |
-          # version=${{ github.event.release.tag_name }} | sed 's/v//g'
+          version=${{ github.event.release.tag_name }} | sed 's/v//g'
           echo "version=${version}" >> $GITHUB_OUTPUT
 
-      - name: Build Artifacts
+      - name: Prepare Go
         run: |
           go mod tidy
           go mod download
           go mod verify
           go mod vendor
-          make build-all VERSION=${{ steps.version.outputs.version }}
 
+      - name: Build Artifacts
+        run: |
+          make build-all VERSION=${{ steps.version.outputs.version }}
 
       - name: Upload Release Artifacts
         uses: softprops/action-gh-release@v2.0.8
