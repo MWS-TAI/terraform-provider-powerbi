@@ -13,12 +13,16 @@ name: release
 on:
   release:
     types: [published]
+
 jobs:
   upload-artifacts:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
       - name: Unshallow
         run: git fetch --prune --unshallow
 
@@ -30,8 +34,8 @@ jobs:
       - name: Get Version
         id: version
         run: |
-          version=${{ github.event.release.tag_name }} | sed 's/^v//'
-          echo "version=${version}" >> $GITHUB_ENV
+          # version=${{ github.event.release.tag_name }} | sed 's/^v//'
+          echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
 
       - name: Build Artifacts
         run: |
