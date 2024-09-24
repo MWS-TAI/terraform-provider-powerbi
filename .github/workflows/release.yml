@@ -43,7 +43,7 @@ jobs:
         uses: softprops/action-gh-release@v2.0.8
         with:
           files: |
-            bin/{{ steps.version.outputs.version }}/darwin_arm64/terraform-provider-powerbi_{{ steps.version.outputs.version }}
-            bin/{{ steps.version.outputs.version }}/linux_amd64/terraform-provider-powerbi_{{ steps.version.outputs.version }}
-            bin/{{ steps.version.outputs.version }}/windows_amd64/terraform-provider-powerbi_{{ steps.version.outputs.version }}
+            bin/${{ steps.version.outputs.version }}/darwin_arm64/terraform-provider-powerbi_${{ steps.version.outputs.version }}
+            bin/${{ steps.version.outputs.version }}/linux_amd64/terraform-provider-powerbi_${{ steps.version.outputs.version }}
+            bin/${{ steps.version.outputs.version }}/windows_amd64/terraform-provider-powerbi_${{ steps.version.outputs.version }}
           token: ${{ secrets.GITHUB_TOKEN }}
