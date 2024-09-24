@@ -1,6 +1,6 @@
 .PHONY: build, testacc, fmt, fmtcheck, docs, build-all
 
-VERSION ?= v1.0.0
+VERSION ?= 1.0.0
 
 default: build
 
@@ -22,8 +22,10 @@ docs:
 build-all:
 	for GOOS in darwin linux windows; do \
 		if [ $$GOOS = "darwin" ]; then \
-			GOARCH=arm64 go build -o bin/$$GOOS/terraform-provider-powerbi-$(VERSION); \
+			GOARCH=arm64; \
 		else \
-			GOARCH=amd64 go build -o bin/$$GOOS/terraform-provider-powerbi-$(VERSION); \
-		fi \
+			GOARCH=amd64; \
+		fi; \
+		echo "Building for $$GOOS/$$GOARCH"; \
+		go build -o bin/$(VERSION)/$${GOOS}_$${GOARCH}/terraform-provider-powerbi_v$(VERSION); \
 	done

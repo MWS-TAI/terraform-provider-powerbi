@@ -70,3 +70,12 @@ func (client *Client) RebindReportInGroup(groupID string, reportID string, reque
 
 	return err
 }
+
+// TakeOverReportInGroup takes over a report that exists within a group.
+func (client *Client) TakeOverReportInGroup(groupID string, reportID string) error {
+	
+	url := fmt.Sprintf("https://api.powerbi.com/v1.0/myorg/groups/%s/reports/%s/Default.TakeOver", url.PathEscape(groupID), url.PathEscape(reportID))
+	err := client.doJSON("POST", url, nil, nil)
+
+	return err
+}

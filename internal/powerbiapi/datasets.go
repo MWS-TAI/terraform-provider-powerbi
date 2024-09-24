@@ -156,6 +156,15 @@ func (client *Client) DeleteDatasetInGroup(groupID string, datasetID string) err
 	return err
 }
 
+// TakeOverDatasetInGroup takes over a dataset that exists within a group.
+func (client *Client) TakeOverDatasetInGroup(groupID string, datasetID string) error {
+	
+	url := fmt.Sprintf("https://api.powerbi.com/v1.0/myorg/groups/%s/datasets/%s/Default.TakeOver", url.PathEscape(groupID), url.PathEscape(datasetID))
+	err := client.doJSON("POST", url, nil, nil)
+
+	return err
+}
+
 // GetParametersInGroup gets parameters in a dataset that exists within a group.
 func (client *Client) GetParametersInGroup(groupID string, datasetID string) (*GetParametersInGroupResponse, error) {
 

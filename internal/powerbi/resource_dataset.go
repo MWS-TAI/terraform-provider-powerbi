@@ -274,6 +274,13 @@ func readDataset(d *schema.ResourceData, meta interface{}) error {
 }
 
 func updateDataset(d *schema.ResourceData, meta interface{}) error {
+
+	// Take over the dataset to ensure we can update it
+	err := takeOverDataset(d, meta)
+	if err != nil {
+		return err
+	}
+
 	if d.HasChange("table") {
 		client := meta.(*powerbiapi.Client)
 
@@ -326,5 +333,19 @@ func deleteDataset(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*powerbiapi.Client)
 
 	groupID := d.Get("workspace_id").(string)
+
+	// Take over the dataset to ensure we can delete it
+	err := takeOverDataset(d, meta)
+	if err != nil {
+		return err
+	}
+
 	return client.DeleteDatasetInGroup(groupID, d.Id())
+}
+
+func takeOverDataset(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*powerbiapi.Client)
+
+	groupID := d.Get("workspace_id").(string)
+	return client.TakeOverDatasetInGroup(groupID, d.Id())
 }

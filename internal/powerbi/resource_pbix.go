@@ -208,6 +208,13 @@ func readPBIX(d *schema.ResourceData, meta interface{}) error {
 }
 
 func updatePBIX(d *schema.ResourceData, meta interface{}) error {
+
+	// Take over the dataset / report to ensure we can update it
+	err := takeOverPBIXReport(d, meta)
+	if err != nil {
+		return err
+	}
+
 	if d.HasChange("source") || d.HasChange("source_hash") || d.HasChange("datasource") {
 
 		d.Partial(true)
@@ -274,6 +281,12 @@ func deletePBIX(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*powerbiapi.Client)
 
 	groupID := d.Get("workspace_id").(string)
+
+	// Take over the dataset / report to ensure we can delete it
+	err := takeOverPBIXReport(d, meta)
+	if err != nil {
+		return err
+	}
 
 	if reportID, reportIDOk := d.GetOk("report_id"); reportIDOk {
 		err := client.DeleteReportInGroup(groupID, reportID.(string))
@@ -554,4 +567,26 @@ func unbindPBIXDataset(d *schema.ResourceData, meta interface{}) error {
 	return client.RebindReportInGroup(groupID, reportID.(string), powerbiapi.RebindReportInGroupRequest{
 		DatasetID: originalDatasetID.(string),
 	})
+}
+
+func takeOverPBIXReport(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*powerbiapi.Client)
+
+	groupID := d.Get("workspace_id").(string)
+	datasetID, datasetOk := d.GetOk("dataset_id")
+	reportID, reportOk := d.GetOk("report_id")
+
+	var err error
+
+	if datasetOk {
+		err = client.TakeOverDatasetInGroup(groupID, datasetID.(string))
+	} else if reportOk {
+		err = client.TakeOverReportInGroup(groupID, reportID.(string))
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
