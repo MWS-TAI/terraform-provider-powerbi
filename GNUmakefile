@@ -27,5 +27,5 @@ build-all:
 			GOARCH=amd64; \
 		fi; \
 		echo "Building for $$GOOS/$$GOARCH"; \
-		go build -o bin/$(VERSION)/$${GOOS}_$${GOARCH}/terraform-provider-powerbi_v$(VERSION); \
+		CGO_ENABLED=0 GOOS=$$GOOS GOARCH=$$GOARCH go build -o bin/$(VERSION)/$${GOOS}_$${GOARCH}/terraform-provider-powerbi_v$(VERSION); \
 	done
