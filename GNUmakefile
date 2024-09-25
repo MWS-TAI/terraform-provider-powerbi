@@ -26,6 +26,11 @@ build-all:
 		else \
 			GOARCH=amd64; \
 		fi; \
+		if [ $$GOOS = "windows" ]; then \
+			EXTENSION=".exe"; \
+		else \
+			EXTENSION=""; \
+		fi; \
 		echo "Building for $$GOOS/$$GOARCH"; \
-		CGO_ENABLED=0 GOOS=$$GOOS GOARCH=$$GOARCH go build -o bin/$(VERSION)/$${GOOS}_$${GOARCH}/terraform-provider-powerbi_v$(VERSION); \
+		CGO_ENABLED=0 GOOS=$$GOOS GOARCH=$$GOARCH go build -o bin/$(VERSION)/$${GOOS}_$${GOARCH}/terraform-provider-powerbi_v$(VERSION)$$EXTENSION; \
 	done

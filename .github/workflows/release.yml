@@ -37,7 +37,12 @@ jobs:
         run: |
           for arch in darwin_arm64 linux_amd64 windows_amd64; do
             version=${{ steps.version.outputs.version }}
-            mv bin/${version}/${arch}/terraform-provider-powerbi_v${version} bin/${arch}-v${version}
+            if [ "$arch" = "windows_amd64" ]; then
+              suffix=".exe"
+            else
+              suffix=""
+            fi
+            mv bin/${version}/${arch}/terraform-provider-powerbi_v${version}${suffix} bin/${arch}-v${version}${suffix}
           done
 
       - name: Upload Release Artifacts
@@ -46,5 +51,5 @@ jobs:
           files: |
             bin/darwin_arm64-v${{ steps.version.outputs.version }}
             bin/linux_amd64-v${{ steps.version.outputs.version }}
-            bin/windows_amd64-v${{ steps.version.outputs.version }}
+            bin/windows_amd64-v${{ steps.version.outputs.version }}.exe
           token: ${{ secrets.GITHUB_TOKEN }}
